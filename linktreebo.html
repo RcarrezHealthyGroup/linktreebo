@@ -1,0 +1,526 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backoffice Linktree - Configuration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #00a38c 0%, #008975 100%);
+            font-family: 'Gotham Rounded', Arial, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            padding: 32px 18px 24px 18px;
+        }
+        h1 {
+            text-align: center;
+            color: #00a38c;
+            margin-bottom: 32px;
+            font-weight: 700;
+        }
+        .bloc-lien {
+            margin-bottom: 28px;
+            padding: 18px 14px 14px 14px;
+            border-radius: 12px;
+            background: #f8f8f8;
+            box-shadow: 0 1px 4px rgba(0,163,140,0.05);
+            position: relative;
+        }
+        .remove-bloc-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ffdddd;
+            color: #c00;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #008975;
+        }
+        input[type="text"], input[type="url"], select {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #cceee7;
+            margin-bottom: 14px;
+            font-size: 1rem;
+        }
+        .picto-list {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .picto-item {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            background: #e6f7f4;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: border 0.2s;
+        }
+        .picto-item.selected {
+            border: 2px solid #00a38c;
+            background: #d0f5ee;
+        }
+        .add-bloc-btn, .save-btn, .qr-btn-main {
+            display: inline-block;
+            background: #00a38c;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 22px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+        }
+        .add-bloc-btn:hover, .save-btn:hover, .qr-btn-main:hover {
+            background: #008975;
+        }
+        .champ-obligatoire {
+            border: 1.5px solid #ff4d4d !important;
+        }
+        .socials-container {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            background: #f8f8f8;
+            border-radius: 12px;
+            padding: 18px 14px 10px 14px;
+            box-shadow: 0 1px 4px rgba(0,163,140,0.05);
+        }
+        .social-title {
+            font-size: 1.1rem;
+            color: #00a38c;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .social-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .social-row i {
+            font-size: 1.4rem;
+            width: 28px;
+            text-align: center;
+        }
+        .qr-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+        #main-qr-canvas {
+            margin-top: 18px;
+            margin-bottom: 10px;
+            display: none;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+            #main-qr-canvas, #main-qr-canvas * {
+                visibility: visible !important;
+            }
+            #main-qr-canvas {
+                display: block !important;
+                position: absolute;
+                left: 0; right: 0; top: 40%; margin: auto;
+            }
+        }
+        .form-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script>
+        // --- Constantes de configuration ---
+        const pictos = [
+            {icon: 'fa-link', label: 'Lien'},
+            {icon: 'fa-phone', label: 'Téléphone'},
+            {icon: 'fa-map-marker-alt', label: 'Adresse'},
+            {icon: 'fa-calendar', label: 'Calendrier'},
+            {icon: 'fa-envelope', label: 'Email'},
+            {icon: 'fa-user-md', label: 'Santé'},
+            {icon: 'fa-shopping-bag', label: 'Shopping'},
+            {icon: 'fa-info-circle', label: 'Info'},
+            {icon: 'fa-heart', label: 'Cœur'},
+            {icon: 'fa-star', label: 'Étoile'}
+        ];
+
+        const propositionsLiens = [
+            {titre: "J'achète en ligne", url: "/categorie/promotions"},
+            {titre: "Je prends rendez-vous", url: "https://www.doctolib.fr/"},
+            {titre: "J'envoie mon ordonnance", url: "/retrait-medicaments"},
+            {titre: "Ma carte A+", url: "/carteaplus"},
+            {titre: "Personnaliser", url: ""}
+        ];
+
+        const socialNetworks = [
+            { name: "Facebook", icon: "fa-facebook", placeholder: "https://facebook.com/..." },
+            { name: "LinkedIn", icon: "fa-linkedin", placeholder: "https://linkedin.com/..." },
+            { name: "TikTok", icon: "fa-tiktok", placeholder: "https://tiktok.com/..." },
+            { name: "Instagram", icon: "fa-instagram", placeholder: "https://instagram.com/..." }
+        ];
+
+        let blocIndex = 0;
+
+        // --- Fonctions utilitaires ---
+
+        function creerChampTitre(index, titre = '') {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'champ-titre-wrapper';
+
+            // Label
+            const labelTitre = document.createElement('label');
+            labelTitre.textContent = 'Titre du lien';
+            labelTitre.setAttribute('for', `titre-${index}`);
+            wrapper.appendChild(labelTitre);
+
+            // Select
+            const select = document.createElement('select');
+            select.id = `titre-select-${index}`;
+            select.name = `titre-select-${index}`;
+            select.required = true;
+
+            const defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.textContent = "Choisissez votre lien ou personnalisez le";
+            defaultOption.selected = true;
+            defaultOption.disabled = true;
+            select.appendChild(defaultOption);
+
+            propositionsLiens.forEach((prop) => {
+                const option = document.createElement('option');
+                option.value = prop.titre;
+                option.textContent = prop.titre;
+                select.appendChild(option);
+            });
+
+            if (titre && !propositionsLiens.some(p => p.titre === titre)) {
+                select.value = "Personnaliser";
+            } else if (titre) {
+                select.value = titre;
+            }
+
+            wrapper.appendChild(select);
+
+            // Input personnalisé
+            const inputPerso = document.createElement('input');
+            inputPerso.type = 'text';
+            inputPerso.id = `titre-${index}`;
+            inputPerso.name = `titre-${index}`;
+            inputPerso.placeholder = "Votre titre personnalisé";
+            inputPerso.style.display = (select.value === "Personnaliser") ? "block" : "none";
+            inputPerso.required = (select.value === "Personnaliser");
+            if (select.value === "Personnaliser" && titre && !propositionsLiens.some(p => p.titre === titre)) {
+                inputPerso.value = titre;
+            }
+
+            select.addEventListener('change', function() {
+                if (this.value === "Personnaliser") {
+                    inputPerso.style.display = "block";
+                    inputPerso.required = true;
+                } else {
+                    inputPerso.style.display = "none";
+                    inputPerso.required = false;
+                    inputPerso.value = "";
+                }
+            });
+
+            wrapper.appendChild(inputPerso);
+
+            return wrapper;
+        }
+
+        function creerBloc(index, titre = '', url = '', picto = 'fa-link') {
+            const bloc = document.createElement('div');
+            bloc.className = 'bloc-lien';
+            bloc.setAttribute('data-index', index);
+
+            // Bouton suppression
+            const btnSuppr = document.createElement('button');
+            btnSuppr.type = 'button';
+            btnSuppr.className = 'remove-bloc-btn';
+            btnSuppr.innerHTML = '<i class="fa fa-times"></i>';
+            btnSuppr.title = 'Supprimer ce bloc';
+            btnSuppr.onclick = function() {
+                bloc.remove();
+            };
+            bloc.appendChild(btnSuppr);
+
+            // Champ titre
+            bloc.appendChild(creerChampTitre(index, titre));
+
+            // Champ URL
+            const labelUrl = document.createElement('label');
+            labelUrl.textContent = 'URL du lien';
+            labelUrl.setAttribute('for', `url-${index}`);
+            bloc.appendChild(labelUrl);
+
+            const inputUrl = document.createElement('input');
+            inputUrl.type = 'url';
+            inputUrl.id = `url-${index}`;
+            inputUrl.name = `url-${index}`;
+            inputUrl.placeholder = "https://...";
+            let urlInitial = url;
+            if (!url && titre) {
+                const prop = propositionsLiens.find(p => p.titre === titre);
+                if (prop) urlInitial = prop.url;
+            }
+            inputUrl.value = urlInitial || '';
+            bloc.appendChild(inputUrl);
+
+            // Champ picto
+            const labelPicto = document.createElement('label');
+            labelPicto.textContent = 'Choisir un picto';
+            labelPicto.setAttribute('for', `picto-${index}`);
+            bloc.appendChild(labelPicto);
+
+            const pictoList = document.createElement('div');
+            pictoList.className = 'picto-list';
+
+            pictos.forEach(p => {
+                const item = document.createElement('div');
+                item.className = 'picto-item' + (p.icon === picto ? ' selected' : '');
+                item.title = p.label;
+                item.innerHTML = `<i class="fa ${p.icon}"></i>`;
+                item.onclick = function() {
+                    pictoList.querySelectorAll('.picto-item').forEach(i => i.classList.remove('selected'));
+                    item.classList.add('selected');
+                    inputPicto.value = p.icon;
+                };
+                pictoList.appendChild(item);
+            });
+
+            bloc.appendChild(pictoList);
+
+            // Champ caché picto
+            const inputPicto = document.createElement('input');
+            inputPicto.type = 'hidden';
+            inputPicto.name = `picto-${index}`;
+            inputPicto.value = picto;
+            bloc.appendChild(inputPicto);
+
+            return bloc;
+        }
+
+        function ajouterBloc(titre = '', url = '', picto = 'fa-link') {
+            const blocsContainer = document.getElementById('blocsContainer');
+            const bloc = creerBloc(blocIndex++, titre, url, picto);
+            blocsContainer.appendChild(bloc);
+
+            // On ne gère plus ici l'ajout des réseaux sociaux et du QR code
+        }
+
+        function ajouterChampsReseauxSociaux() {
+            if (document.getElementById('socialsContainer')) return;
+            const socialsContainer = document.createElement('div');
+            socialsContainer.className = 'socials-container';
+            socialsContainer.id = 'socialsContainer';
+
+            const title = document.createElement('div');
+            title.className = 'social-title';
+            title.innerHTML = '<i class="fa fa-share-alt"></i> Réseaux sociaux de la pharmacie';
+            socialsContainer.appendChild(title);
+
+            socialNetworks.forEach(social => {
+                const row = document.createElement('div');
+                row.className = 'social-row';
+
+                const icon = document.createElement('i');
+                icon.className = `fab ${social.icon}`;
+                row.appendChild(icon);
+
+                const input = document.createElement('input');
+                input.type = 'url';
+                input.name = `social-${social.name.toLowerCase()}`;
+                input.placeholder = social.placeholder;
+                input.id = `social-${social.name.toLowerCase()}`;
+                row.appendChild(input);
+
+                socialsContainer.appendChild(row);
+            });
+
+            // On n'insère plus ici, mais dans l'initialisation
+            return socialsContainer;
+        }
+
+        function ajouterSectionQRCodePage() {
+            if (document.getElementById('qrSectionPage')) return;
+            const qrSection = document.createElement('div');
+            qrSection.className = 'qr-section';
+            qrSection.id = 'qrSectionPage';
+
+            const btnQR = document.createElement('button');
+            btnQR.type = 'button';
+            btnQR.className = 'qr-btn-main';
+            btnQR.id = 'btn-main-qr';
+            btnQR.textContent = 'Générer mon QR code';
+            qrSection.appendChild(btnQR);
+
+            const qrCanvas = document.createElement('canvas');
+            qrCanvas.id = 'main-qr-canvas';
+            qrSection.appendChild(qrCanvas);
+
+            document.getElementById('blocsForm').appendChild(qrSection);
+
+            let qrGenerated = false;
+            btnQR.onclick = function() {
+                if (!qrGenerated) {
+                    genererMainQR("https://monlinktree.fr");
+                    btnQR.textContent = "Télécharger mon QR code";
+                    qrGenerated = true;
+                } else {
+                    telechargerMainQR();
+                }
+            };
+        }
+
+        function genererMainQR(url) {
+            const canvas = document.getElementById('main-qr-canvas');
+            canvas.style.display = "block";
+            new QRious({
+                element: canvas,
+                value: url,
+                size: 200
+            });
+        }
+
+        function telechargerMainQR() {
+            const canvas = document.getElementById('main-qr-canvas');
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL("image/png");
+            link.download = "qr-monlinktree.png";
+            link.click();
+        }
+
+        // --- Initialisation ---
+
+        window.onload = function() {
+            ajouterBloc();
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Création du bouton "Ajouter un bloc"
+            const addBlocBtn = document.createElement('button');
+            addBlocBtn.type = 'button';
+            addBlocBtn.className = 'add-bloc-btn';
+            addBlocBtn.textContent = 'Ajouter un lien';
+            addBlocBtn.onclick = function() {
+                ajouterBloc();
+            };
+
+            // Bouton enregistrer
+            const saveBtn = document.createElement('button');
+            saveBtn.type = 'submit';
+            saveBtn.className = 'save-btn';
+            saveBtn.textContent = 'Enregistrer';
+
+            // Conteneur bouton "Ajouter un lien"
+            const formButtons = document.createElement('div');
+            formButtons.className = 'form-buttons';
+            formButtons.appendChild(addBlocBtn);
+
+            // Ajout du bouton "Ajouter un lien" juste après les blocs
+            const blocsContainer = document.getElementById('blocsContainer');
+            blocsContainer.parentNode.insertBefore(formButtons, blocsContainer.nextSibling);
+
+            // Ajout du bloc réseaux sociaux juste après le bouton "Ajouter un lien"
+            const socialsContainer = ajouterChampsReseauxSociaux();
+            if (socialsContainer) {
+                formButtons.parentNode.insertBefore(socialsContainer, formButtons.nextSibling);
+            }
+
+            // Ajout du bouton "Enregistrer" juste après les réseaux sociaux (et avant le QR code)
+            const saveBtnContainer = document.createElement('div');
+            saveBtnContainer.className = 'form-buttons';
+            saveBtnContainer.appendChild(saveBtn);
+
+            if (socialsContainer) {
+                socialsContainer.parentNode.insertBefore(saveBtnContainer, socialsContainer.nextSibling);
+            } else {
+                // Si pas de réseaux sociaux, on le met après le bouton "Ajouter un lien"
+                formButtons.parentNode.insertBefore(saveBtnContainer, formButtons.nextSibling);
+            }
+
+            // Ajout de la section QR code (qui sera donc après le bouton "Enregistrer")
+            ajouterSectionQRCodePage();
+
+            // Gestion de la soumission du formulaire
+            document.getElementById('blocsForm').onsubmit = function(e) {
+                e.preventDefault();
+                const blocs = [];
+                document.querySelectorAll('.bloc-lien').forEach(bloc => {
+                    const index = bloc.getAttribute('data-index');
+                    const selectTitre = bloc.querySelector(`select[name="titre-select-${index}"]`);
+                    let titre = '';
+                    if (selectTitre.value === "Personnaliser") {
+                        titre = bloc.querySelector(`input[name="titre-${index}"]`).value.trim();
+                    } else {
+                        titre = selectTitre.value;
+                    }
+                    const url = bloc.querySelector(`input[name="url-${index}"]`).value.trim();
+                    const picto = bloc.querySelector(`input[name="picto-${index}"]`).value;
+                    if (titre && url && picto) {
+                        blocs.push({titre, url, picto});
+                    }
+                });
+
+                // Récupérer les réseaux sociaux
+                const socials = {};
+                socialNetworks.forEach(social => {
+                    const input = document.getElementById(`social-${social.name.toLowerCase()}`);
+                    if (input && input.value.trim()) {
+                        socials[social.name] = input.value.trim();
+                    }
+                });
+
+                // Ici, vous pouvez envoyer les données à votre backend ou les afficher
+                alert('Blocs enregistrés :\n' + JSON.stringify(blocs, null, 2) + '\nRéseaux sociaux :\n' + JSON.stringify(socials, null, 2));
+            };
+        });
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Configuration des liens rapides</h1>
+        <form id="blocsForm">
+            <div id="blocsContainer">
+                <!-- Les blocs seront ajoutés ici dynamiquement -->
+            </div>
+            <!-- Les champs réseaux sociaux et boutons seront ajoutés ici dynamiquement -->
+        </form>
+    </div>
+</body>
+</html>
