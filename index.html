@@ -1,217 +1,526 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <!-- Logo Aprium au-dessus du nom de la pharmacie -->
-    <div style="text-align:center; background-color: #fff;">
-        <img src="http://centre-deux.aprium-pharmacie.fr/images/logos/centre-deux.gif" alt="Logo Aprium" >
-    </div>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pharmacie - Liens Utiles</title>
-    <link rel="icon" type="image/x-icon" href="https://aprium-pharmacie.com/favicon.ico">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Ajout des pictos réseaux sociaux avec Font Awesome -->
+    <title>Backoffice Linktree - Configuration</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-
     <style>
         body {
-            background-color: #00a38c;
-            min-height: 100vh;
             background: linear-gradient(135deg, #00a38c 0%, #008975 100%);
-            font-family: 'Gotham', Arial, sans-serif;
-        }
-        .link-card {
-            background: #fff; /* Couleur de fond blanche */
-            border-radius: 18px;
-            padding: 10px 18px;
-            margin-bottom: 16px;
-            text-decoration: none;
-            color: #212529;
-            text-align: center;
-            transition: all 0.25s cubic-bezier(.4,0,.2,1);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
-            border: 1px solid rgba(0,163,140,0.08);
-            backdrop-filter: blur(3px);
-            width: 100%;
-            max-width: 340px;
-            margin-left: auto;
-            margin-right: auto;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            min-height: 64px;
-        }
-        .link-card:hover {
-            transform: translateY(-3px) scale(1.025);
-            box-shadow: 0 6px 24px rgba(0,0,0,0.13);
-            background: #fff; /* Toujours blanc au survol */
-        }
-        .link-card .link-icon {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #00a38c 60%, #008975 100%);
-            color: #fff;
-            font-size: 2rem;
-            box-shadow: 0 2px 8px rgba(0,163,140,0.10);
-            margin-right: 0;
-            flex-shrink: 0;
-            transition: background 0.2s;
-        }
-        .link-card:hover .link-icon {
-            background: linear-gradient(135deg, #008975 60%, #00a38c 100%);
+            font-family: 'Gotham Rounded', Arial, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
         }
         .container {
             max-width: 600px;
-            padding: 30px 15px;
+            margin: 40px auto;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            padding: 32px 18px 24px 18px;
         }
-        .link-card h5 {
-            margin: 0;
-            font-weight: 600;
-            text-align: left;
+        h1 {
+            text-align: center;
             color: #00a38c;
-            font-size: 1.15rem;
-            letter-spacing: 0.01em;
-            display: inline-block;
-            vertical-align: middle;
-        }
-        .link-card p {
-            margin: 0;
-            font-size: 0.9rem;
-            color: #6c757d;
-        }
-        .text-center h1 {
-            font-size: 2.5rem;
+            margin-bottom: 32px;
             font-weight: 700;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
-            margin-bottom: 10px;
         }
-        .text-center p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-            margin-bottom: 30px;
+        .bloc-lien {
+            margin-bottom: 28px;
+            padding: 18px 14px 14px 14px;
+            border-radius: 12px;
+            background: #f8f8f8;
+            box-shadow: 0 1px 4px rgba(0,163,140,0.05);
+            position: relative;
         }
-        .social-icons {
-            text-align: center;
-            margin-top: 25px;
-            margin-bottom: 10px;
-        }
-        .social-icons a {
-            display: inline-block;
-            width: 48px;
-            height: 48px;
-            line-height: 48px;
+        .remove-bloc-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #ffdddd;
+            color: #c00;
+            border: none;
             border-radius: 50%;
-            background: #222;
+            width: 28px;
+            height: 28px;
+            cursor: pointer;
+            font-size: 1.1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+            color: #008975;
+        }
+        input[type="text"], input[type="url"], select {
+            width: 100%;
+            padding: 8px 10px;
+            border-radius: 8px;
+            border: 1px solid #cceee7;
+            margin-bottom: 14px;
+            font-size: 1rem;
+        }
+        .picto-list {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .picto-item {
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            background: #e6f7f4;
+            cursor: pointer;
+            font-size: 1.5rem;
+            transition: border 0.2s;
+        }
+        .picto-item.selected {
+            border: 2px solid #00a38c;
+            background: #d0f5ee;
+        }
+        .add-bloc-btn, .save-btn, .qr-btn-main {
+            display: inline-block;
+            background: #00a38c;
             color: #fff;
-            margin: 0 8px;
-            font-size: 2rem;
-            transition: background 0.2s, color 0.2s;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 22px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-bottom: 10px;
+            transition: background 0.2s;
+        }
+        .add-bloc-btn:hover, .save-btn:hover, .qr-btn-main:hover {
+            background: #008975;
+        }
+        .champ-obligatoire {
+            border: 1.5px solid #ff4d4d !important;
+        }
+        .socials-container {
+            margin-top: 30px;
+            margin-bottom: 20px;
+            background: #f8f8f8;
+            border-radius: 12px;
+            padding: 18px 14px 10px 14px;
+            box-shadow: 0 1px 4px rgba(0,163,140,0.05);
+        }
+        .social-title {
+            font-size: 1.1rem;
+            color: #00a38c;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        .social-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+        .social-row i {
+            font-size: 1.4rem;
+            width: 28px;
             text-align: center;
-            vertical-align: middle;
         }
-        .social-icons a[title="Facebook"] {
-            background: #3b5998;
+        .qr-section {
+            text-align: center;
+            margin-top: 30px;
         }
-        .social-icons a[title="LinkedIn"] {
-            background: #0077b5;
+        #main-qr-canvas {
+            margin-top: 18px;
+            margin-bottom: 10px;
+            display: none;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
         }
-        .social-icons a[title="Instagram"] {
-            background: #E1306C;
+        @media print {
+            body * {
+                visibility: hidden !important;
+            }
+            #main-qr-canvas, #main-qr-canvas * {
+                visibility: visible !important;
+            }
+            #main-qr-canvas {
+                display: block !important;
+                position: absolute;
+                left: 0; right: 0; top: 40%; margin: auto;
+            }
+        }
+        .form-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            margin-top: 20px;
+            margin-bottom: 10px;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script>
+        // --- Constantes de configuration ---
+        const pictos = [
+            {icon: 'fa-link', label: 'Lien'},
+            {icon: 'fa-phone', label: 'Téléphone'},
+            {icon: 'fa-map-marker-alt', label: 'Adresse'},
+            {icon: 'fa-calendar', label: 'Calendrier'},
+            {icon: 'fa-envelope', label: 'Email'},
+            {icon: 'fa-user-md', label: 'Santé'},
+            {icon: 'fa-shopping-bag', label: 'Shopping'},
+            {icon: 'fa-info-circle', label: 'Info'},
+            {icon: 'fa-heart', label: 'Cœur'},
+            {icon: 'fa-star', label: 'Étoile'}
+        ];
+
+        const propositionsLiens = [
+            {titre: "J'achète en ligne", url: "/categorie/promotions"},
+            {titre: "Je prends rendez-vous", url: "https://www.doctolib.fr/"},
+            {titre: "J'envoie mon ordonnance", url: "/retrait-medicaments"},
+            {titre: "Ma carte A+", url: "/carteaplus"},
+            {titre: "Personnaliser", url: ""}
+        ];
+
+        const socialNetworks = [
+            { name: "Facebook", icon: "fa-facebook", placeholder: "https://facebook.com/..." },
+            { name: "LinkedIn", icon: "fa-linkedin", placeholder: "https://linkedin.com/..." },
+            { name: "TikTok", icon: "fa-tiktok", placeholder: "https://tiktok.com/..." },
+            { name: "Instagram", icon: "fa-instagram", placeholder: "https://instagram.com/..." }
+        ];
+
+        let blocIndex = 0;
+
+        // --- Fonctions utilitaires ---
+
+        function creerChampTitre(index, titre = '') {
+            const wrapper = document.createElement('div');
+            wrapper.className = 'champ-titre-wrapper';
+
+            // Label
+            const labelTitre = document.createElement('label');
+            labelTitre.textContent = 'Titre du lien';
+            labelTitre.setAttribute('for', `titre-${index}`);
+            wrapper.appendChild(labelTitre);
+
+            // Select
+            const select = document.createElement('select');
+            select.id = `titre-select-${index}`;
+            select.name = `titre-select-${index}`;
+            select.required = true;
+
+            const defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.textContent = "Choisissez votre lien ou personnalisez le";
+            defaultOption.selected = true;
+            defaultOption.disabled = true;
+            select.appendChild(defaultOption);
+
+            propositionsLiens.forEach((prop) => {
+                const option = document.createElement('option');
+                option.value = prop.titre;
+                option.textContent = prop.titre;
+                select.appendChild(option);
+            });
+
+            if (titre && !propositionsLiens.some(p => p.titre === titre)) {
+                select.value = "Personnaliser";
+            } else if (titre) {
+                select.value = titre;
+            }
+
+            wrapper.appendChild(select);
+
+            // Input personnalisé
+            const inputPerso = document.createElement('input');
+            inputPerso.type = 'text';
+            inputPerso.id = `titre-${index}`;
+            inputPerso.name = `titre-${index}`;
+            inputPerso.placeholder = "Votre titre personnalisé";
+            inputPerso.style.display = (select.value === "Personnaliser") ? "block" : "none";
+            inputPerso.required = (select.value === "Personnaliser");
+            if (select.value === "Personnaliser" && titre && !propositionsLiens.some(p => p.titre === titre)) {
+                inputPerso.value = titre;
+            }
+
+            select.addEventListener('change', function() {
+                if (this.value === "Personnaliser") {
+                    inputPerso.style.display = "block";
+                    inputPerso.required = true;
+                } else {
+                    inputPerso.style.display = "none";
+                    inputPerso.required = false;
+                    inputPerso.value = "";
+                }
+            });
+
+            wrapper.appendChild(inputPerso);
+
+            return wrapper;
+        }
+
+        function creerBloc(index, titre = '', url = '', picto = 'fa-link') {
+            const bloc = document.createElement('div');
+            bloc.className = 'bloc-lien';
+            bloc.setAttribute('data-index', index);
+
+            // Bouton suppression
+            const btnSuppr = document.createElement('button');
+            btnSuppr.type = 'button';
+            btnSuppr.className = 'remove-bloc-btn';
+            btnSuppr.innerHTML = '<i class="fa fa-times"></i>';
+            btnSuppr.title = 'Supprimer ce bloc';
+            btnSuppr.onclick = function() {
+                bloc.remove();
+            };
+            bloc.appendChild(btnSuppr);
+
+            // Champ titre
+            bloc.appendChild(creerChampTitre(index, titre));
+
+            // Champ URL
+            const labelUrl = document.createElement('label');
+            labelUrl.textContent = 'URL du lien';
+            labelUrl.setAttribute('for', `url-${index}`);
+            bloc.appendChild(labelUrl);
+
+            const inputUrl = document.createElement('input');
+            inputUrl.type = 'url';
+            inputUrl.id = `url-${index}`;
+            inputUrl.name = `url-${index}`;
+            inputUrl.placeholder = "https://...";
+            let urlInitial = url;
+            if (!url && titre) {
+                const prop = propositionsLiens.find(p => p.titre === titre);
+                if (prop) urlInitial = prop.url;
+            }
+            inputUrl.value = urlInitial || '';
+            bloc.appendChild(inputUrl);
+
+            // Champ picto
+            const labelPicto = document.createElement('label');
+            labelPicto.textContent = 'Choisir un picto';
+            labelPicto.setAttribute('for', `picto-${index}`);
+            bloc.appendChild(labelPicto);
+
+            const pictoList = document.createElement('div');
+            pictoList.className = 'picto-list';
+
+            pictos.forEach(p => {
+                const item = document.createElement('div');
+                item.className = 'picto-item' + (p.icon === picto ? ' selected' : '');
+                item.title = p.label;
+                item.innerHTML = `<i class="fa ${p.icon}"></i>`;
+                item.onclick = function() {
+                    pictoList.querySelectorAll('.picto-item').forEach(i => i.classList.remove('selected'));
+                    item.classList.add('selected');
+                    inputPicto.value = p.icon;
+                };
+                pictoList.appendChild(item);
+            });
+
+            bloc.appendChild(pictoList);
+
+            // Champ caché picto
+            const inputPicto = document.createElement('input');
+            inputPicto.type = 'hidden';
+            inputPicto.name = `picto-${index}`;
+            inputPicto.value = picto;
+            bloc.appendChild(inputPicto);
+
+            return bloc;
+        }
+
+        function ajouterBloc(titre = '', url = '', picto = 'fa-link') {
+            const blocsContainer = document.getElementById('blocsContainer');
+            const bloc = creerBloc(blocIndex++, titre, url, picto);
+            blocsContainer.appendChild(bloc);
+
+            // On ne gère plus ici l'ajout des réseaux sociaux et du QR code
+        }
+
+        function ajouterChampsReseauxSociaux() {
+            if (document.getElementById('socialsContainer')) return;
+            const socialsContainer = document.createElement('div');
+            socialsContainer.className = 'socials-container';
+            socialsContainer.id = 'socialsContainer';
+
+            const title = document.createElement('div');
+            title.className = 'social-title';
+            title.innerHTML = '<i class="fa fa-share-alt"></i> Réseaux sociaux de la pharmacie';
+            socialsContainer.appendChild(title);
+
+            socialNetworks.forEach(social => {
+                const row = document.createElement('div');
+                row.className = 'social-row';
+
+                const icon = document.createElement('i');
+                icon.className = `fab ${social.icon}`;
+                row.appendChild(icon);
+
+                const input = document.createElement('input');
+                input.type = 'url';
+                input.name = `social-${social.name.toLowerCase()}`;
+                input.placeholder = social.placeholder;
+                input.id = `social-${social.name.toLowerCase()}`;
+                row.appendChild(input);
+
+                socialsContainer.appendChild(row);
+            });
+
+            // On n'insère plus ici, mais dans l'initialisation
+            return socialsContainer;
+        }
+
+        function ajouterSectionQRCodePage() {
+            if (document.getElementById('qrSectionPage')) return;
+            const qrSection = document.createElement('div');
+            qrSection.className = 'qr-section';
+            qrSection.id = 'qrSectionPage';
+
+            const btnQR = document.createElement('button');
+            btnQR.type = 'button';
+            btnQR.className = 'qr-btn-main';
+            btnQR.id = 'btn-main-qr';
+            btnQR.textContent = 'Générer mon QR code';
+            qrSection.appendChild(btnQR);
+
+            const qrCanvas = document.createElement('canvas');
+            qrCanvas.id = 'main-qr-canvas';
+            qrSection.appendChild(qrCanvas);
+
+            document.getElementById('blocsForm').appendChild(qrSection);
+
+            let qrGenerated = false;
+            btnQR.onclick = function() {
+                if (!qrGenerated) {
+                    genererMainQR("https://monlinktree.fr");
+                    btnQR.textContent = "Télécharger mon QR code";
+                    qrGenerated = true;
+                } else {
+                    telechargerMainQR();
+                }
+            };
+        }
+
+        function genererMainQR(url) {
+            const canvas = document.getElementById('main-qr-canvas');
+            canvas.style.display = "block";
+            new QRious({
+                element: canvas,
+                value: url,
+                size: 200
+            });
+        }
+
+        function telechargerMainQR() {
+            const canvas = document.getElementById('main-qr-canvas');
+            const link = document.createElement('a');
+            link.href = canvas.toDataURL("image/png");
+            link.download = "qr-monlinktree.png";
+            link.click();
+        }
+
+        // --- Initialisation ---
+
+        window.onload = function() {
+            ajouterBloc();
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Création du bouton "Ajouter un bloc"
+            const addBlocBtn = document.createElement('button');
+            addBlocBtn.type = 'button';
+            addBlocBtn.className = 'add-bloc-btn';
+            addBlocBtn.textContent = 'Ajouter un lien';
+            addBlocBtn.onclick = function() {
+                ajouterBloc();
+            };
+
+            // Bouton enregistrer
+            const saveBtn = document.createElement('button');
+            saveBtn.type = 'submit';
+            saveBtn.className = 'save-btn';
+            saveBtn.textContent = 'Enregistrer';
+
+            // Conteneur bouton "Ajouter un lien"
+            const formButtons = document.createElement('div');
+            formButtons.className = 'form-buttons';
+            formButtons.appendChild(addBlocBtn);
+
+            // Ajout du bouton "Ajouter un lien" juste après les blocs
+            const blocsContainer = document.getElementById('blocsContainer');
+            blocsContainer.parentNode.insertBefore(formButtons, blocsContainer.nextSibling);
+
+            // Ajout du bloc réseaux sociaux juste après le bouton "Ajouter un lien"
+            const socialsContainer = ajouterChampsReseauxSociaux();
+            if (socialsContainer) {
+                formButtons.parentNode.insertBefore(socialsContainer, formButtons.nextSibling);
+            }
+
+            // Ajout du bouton "Enregistrer" juste après les réseaux sociaux (et avant le QR code)
+            const saveBtnContainer = document.createElement('div');
+            saveBtnContainer.className = 'form-buttons';
+            saveBtnContainer.appendChild(saveBtn);
+
+            if (socialsContainer) {
+                socialsContainer.parentNode.insertBefore(saveBtnContainer, socialsContainer.nextSibling);
+            } else {
+                // Si pas de réseaux sociaux, on le met après le bouton "Ajouter un lien"
+                formButtons.parentNode.insertBefore(saveBtnContainer, formButtons.nextSibling);
+            }
+
+            // Ajout de la section QR code (qui sera donc après le bouton "Enregistrer")
+            ajouterSectionQRCodePage();
+
+            // Gestion de la soumission du formulaire
+            document.getElementById('blocsForm').onsubmit = function(e) {
+                e.preventDefault();
+                const blocs = [];
+                document.querySelectorAll('.bloc-lien').forEach(bloc => {
+                    const index = bloc.getAttribute('data-index');
+                    const selectTitre = bloc.querySelector(`select[name="titre-select-${index}"]`);
+                    let titre = '';
+                    if (selectTitre.value === "Personnaliser") {
+                        titre = bloc.querySelector(`input[name="titre-${index}"]`).value.trim();
+                    } else {
+                        titre = selectTitre.value;
+                    }
+                    const url = bloc.querySelector(`input[name="url-${index}"]`).value.trim();
+                    const picto = bloc.querySelector(`input[name="picto-${index}"]`).value;
+                    if (titre && url && picto) {
+                        blocs.push({titre, url, picto});
+                    }
+                });
+
+                // Récupérer les réseaux sociaux
+                const socials = {};
+                socialNetworks.forEach(social => {
+                    const input = document.getElementById(`social-${social.name.toLowerCase()}`);
+                    if (input && input.value.trim()) {
+                        socials[social.name] = input.value.trim();
+                    }
+                });
+
+                // Ici, vous pouvez envoyer les données à votre backend ou les afficher
+                alert('Blocs enregistrés :\n' + JSON.stringify(blocs, null, 2) + '\nRéseaux sociaux :\n' + JSON.stringify(socials, null, 2));
+            };
+        });
+    </script>
 </head>
 <body>
     <div class="container">
-        <div class="text-center mb-4">
-            <!-- <h1 class="text-white">Pharmacie Centre Deux</h1> -->
-            <p class="text-white">10 RUE ALEXANDRE POURCEL<br>42100 SAINT ETIENNE<br>Tel : 0477570599</p>
-        </div>
-
-        
-
-        <a href="https://centre-deux.aprium-pharmacie.fr/categorie/promotions" class="link-card" target="_blank">
-            <span style="font-size:1.5rem;vertical-align:middle;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-                    <path d="M5 8L7 18a2 2 0 0 0 2 1.5h6a2 2 0 0 0 2-1.5l2-10Z" stroke="#2dce89" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                    <path d="M9 10V7a3 3 0 0 1 6 0v3" stroke="#2dce89" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
-                    <circle cx="9" cy="20" r="1.2" fill="#2dce89"/>
-                    <circle cx="15" cy="20" r="1.2" fill="#2dce89"/>
-                </svg>
-            </span>
-            <h5 style="display:inline; margin-left:8px;">J'achète en ligne</h5>
-            <!-- <p class="mb-0 text-muted">Consultez notre catalogue</p> -->
-        </a>
-
-        <a href="https://www.doctolib.fr/pharmacie/lille/pharmacie-esquermoise/booking/motive-categories?specialityId=3097&telehealth=false&placeId=practice-329294&profile_skipped=true&bookingFunnelSource=external_referral" class="link-card" target="_blank">
-            <span style="font-size:1.5rem;vertical-align:middle;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-                    <rect x="3" y="4" width="18" height="18" rx="4" fill="#2dce89"/>
-                    <rect x="3" y="8" width="18" height="14" rx="2" fill="#fff"/>
-                    <rect x="7" y="12" width="2" height="2" rx="1" fill="#2dce89"/>
-                    <rect x="11" y="12" width="2" height="2" rx="1" fill="#2dce89"/>
-                    <rect x="15" y="12" width="2" height="2" rx="1" fill="#2dce89"/>
-                    <rect x="7" y="16" width="2" height="2" rx="1" fill="#2dce89"/>
-                    <rect x="11" y="16" width="2" height="2" rx="1" fill="#2dce89"/>
-                    <rect x="15" y="16" width="2" height="2" rx="1" fill="#2dce89"/>
-                    <rect x="7" y="4" width="2" height="4" rx="1" fill="#fff"/>
-                    <rect x="15" y="4" width="2" height="4" rx="1" fill="#fff"/>
-                </svg>
-            </span>
-            <h5 style="display:inline; margin-left:8px;">Je prends rendez-vous</h5>
-            <!-- <p class="mb-0 text-muted">Réservez un créneau pour vos services</p> -->
-        </a>
-
-        <a href="https://centre-deux.aprium-pharmacie.fr/retrait-medicaments" class="link-card" target="_blank">
-            <span style="font-size:1.5rem;vertical-align:middle;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" style="vertical-align:middle;">
-                    <rect x="3" y="10" width="18" height="4" rx="2" fill="#2dce89"/>
-                    <rect x="10" y="3" width="4" height="18" rx="2" fill="#2dce89"/>
-                    <rect x="3" y="10" width="18" height="4" rx="2" fill="#fff" fill-opacity="0.3"/>
-                    <rect x="10" y="3" width="4" height="18" rx="2" fill="#fff" fill-opacity="0.3"/>
-                </svg>
-            </span>
-            <h5 style="display:inline; margin-left:8px;">J'envoie mon ordonnance</h5>
-            <!-- <p class="mb-0 text-muted">Envoyez votre ordonnance à l'avance</p> -->
-        </a>
-
-        <a href="https://centre-deux.aprium-pharmacie.fr/carteaplus" class="link-card" target="_blank">
-            <span style="font-size:1.5rem;vertical-align:middle;">
-                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="36" viewBox="0 0 32 36" fill="none" style="vertical-align:middle;">
-                    <rect x="1" y="6" width="30" height="24" rx="7" fill="#2dce89" stroke="#008975" stroke-width="2"/>
-                    <rect x="5" y="11" width="14" height="5" rx="2.5" fill="#fff" fill-opacity="0.8"/>
-                    <circle cx="25" cy="17" r="4.5" fill="#fff" fill-opacity="0.8"/>
-                    <rect x="5" y="20" width="11" height="3" rx="1.5" fill="#fff" fill-opacity="0.7"/>
-                </svg>
-            </span>
-            <h5 style="display:inline; margin-left:8px;">Ma Carte A+</h5>
-            <!-- <p class="mb-0 text-muted">Votre programme de fidélité</p> -->
-        </a>
-
-        <!--
-        <a href="#" class="link-card" target="_blank">
-            <span style="font-size:1.5rem;vertical-align:middle;">📞</span>
-            <h5 style="display:inline; margin-left:8px;">Contact</h5>
-            <p class="mb-0 text-muted">Appelez-nous ou envoyez un message</p>
-        </a>
-
-        <a href="#" class="link-card" target="_blank">
-            <span style="font-size:1.5rem;vertical-align:middle;">ℹ️</span>
-            <h5 style="display:inline; margin-left:8px;">À propos</h5>
-            <p class="mb-0 text-muted">En savoir plus sur notre pharmacie</p>
-        </a>
-        -->
-        <!-- Pictos réseaux sociaux -->
-        <div class="social-icons">
-            <a href="https://www.facebook.com/PharmacieCentreDeux/" target="_blank" title="Facebook" style="background:#3b5998;"><i class="fab fa-facebook-f"></i></a>
-            <a href="https://www.instagram.com/pharmaciecentredeux/" target="_blank" title="Instagram" style="background:#E1306C;"><i class="fab fa-instagram"></i></a>
-            <a href="https://www.tiktok.com/@pharmaciecentredeux" target="_blank" title="TikTok" style="background:#000;"><i class="fab fa-tiktok"></i></a>
-        </div>
+        <h1>Configuration des liens rapides</h1>
+        <form id="blocsForm">
+            <div id="blocsContainer">
+                <!-- Les blocs seront ajoutés ici dynamiquement -->
+            </div>
+            <!-- Les champs réseaux sociaux et boutons seront ajoutés ici dynamiquement -->
+        </form>
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
