@@ -316,6 +316,21 @@
             };
             bloc.appendChild(btnSuppr);
 
+            // Champ ordre
+            const labelOrdre = document.createElement('label');
+            labelOrdre.textContent = 'Ordre d\'affichage';
+            labelOrdre.setAttribute('for', `ordre-${index}`);
+            bloc.appendChild(labelOrdre);
+
+            const inputOrdre = document.createElement('input');
+            inputOrdre.type = 'number';
+            inputOrdre.id = `ordre-${index}`;
+            inputOrdre.name = `ordre-${index}`;
+            inputOrdre.placeholder = "1, 2, 3...";
+            inputOrdre.min = "1";
+            inputOrdre.value = (index + 1).toString();
+            bloc.appendChild(inputOrdre);
+
             // Champ titre
             bloc.appendChild(creerChampTitre(index, titre));
 
@@ -426,6 +441,14 @@
             btnQR.textContent = 'Générer mon QR code';
             qrSection.appendChild(btnQR);
 
+            const btnAffiche = document.createElement('button');
+            btnAffiche.type = 'button';
+            btnAffiche.className = 'qr-btn-main';
+            btnAffiche.id = 'btn-affiche';
+            btnAffiche.textContent = 'Télécharger mon affiche';
+            btnAffiche.style.marginLeft = '10px';
+            qrSection.appendChild(btnAffiche);
+
             const qrCanvas = document.createElement('canvas');
             qrCanvas.id = 'main-qr-canvas';
             qrSection.appendChild(qrCanvas);
@@ -441,6 +464,10 @@
                 } else {
                     telechargerMainQR();
                 }
+            };
+
+            btnAffiche.onclick = function() {
+                telechargerAffiche();
             };
         }
 
@@ -460,6 +487,11 @@
             link.href = canvas.toDataURL("image/png");
             link.download = "qr-monlinktree.png";
             link.click();
+        }
+
+        function telechargerAffiche() {
+            // Ici vous pouvez implémenter la logique pour générer et télécharger l'affiche
+            alert('Fonctionnalité de téléchargement d\'affiche à implémenter');
         }
 
         // --- Initialisation ---
@@ -520,6 +552,7 @@
                 const blocs = [];
                 document.querySelectorAll('.bloc-lien').forEach(bloc => {
                     const index = bloc.getAttribute('data-index');
+                    const ordre = bloc.querySelector(`input[name="ordre-${index}"]`).value.trim();
                     const selectTitre = bloc.querySelector(`select[name="titre-select-${index}"]`);
                     let titre = '';
                     if (selectTitre.value === "Personnaliser") {
@@ -529,10 +562,13 @@
                     }
                     const url = bloc.querySelector(`input[name="url-${index}"]`).value.trim();
                     const picto = bloc.querySelector(`input[name="picto-${index}"]`).value;
-                    if (titre && url && picto) {
-                        blocs.push({titre, url, picto});
+                    if (titre && url && picto && ordre) {
+                        blocs.push({ordre: parseInt(ordre), titre, url, picto});
                     }
                 });
+
+                // Trier les blocs par ordre
+                blocs.sort((a, b) => a.ordre - b.ordre);
 
                 // Récupérer les réseaux sociaux
                 const socials = {};
