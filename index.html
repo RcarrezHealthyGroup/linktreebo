@@ -1,4 +1,35 @@
 <!DOCTYPE html>
+<script>
+    // Fonction pour obtenir l'URL en fonction du titre sélectionné
+    function getUrlParTitre(titre) {
+        const propositionsLiens = [
+            {titre: "J'achète en ligne", url: "/categorie/promotions"},
+            {titre: "Je prends rendez-vous", url: "https://www.doctolib.fr/"},
+            {titre: "J'envoie mon ordonnance", url: "/retrait-medicaments"},
+            {titre: "Ma carte A+", url: "/carteaplus"},
+            {titre: "Personnaliser", url: ""}
+        ];
+        const prop = propositionsLiens.find(p => p.titre === titre);
+        return prop ? prop.url : "";
+    }
+
+    // Attendre que le DOM soit prêt
+    document.addEventListener('DOMContentLoaded', function() {
+        // Pour chaque select de titre, on ajoute un écouteur pour compléter l'URL automatiquement
+        document.addEventListener('change', function(e) {
+            if (e.target && e.target.matches('select[name^="titre-select-"]')) {
+                const select = e.target;
+                const index = select.name.replace('titre-select-', '');
+                const urlInput = document.querySelector(`input[name="url-${index}"]`);
+                if (urlInput && select.value !== "Personnaliser" && select.value !== "") {
+                    urlInput.value = getUrlParTitre(select.value);
+                } else if (urlInput && select.value === "Personnaliser") {
+                    urlInput.value = "";
+                }
+            }
+        });
+    });
+</script>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -185,6 +216,12 @@
             {titre: "Ma carte A+", url: "/carteaplus"},
             {titre: "Personnaliser", url: ""}
         ];
+
+        // Fonction pour obtenir l'URL en fonction du titre sélectionné
+        function getUrlParTitre(titre) {
+            const prop = propositionsLiens.find(p => p.titre === titre);
+            return prop ? prop.url : "";
+        }
 
         const socialNetworks = [
             { name: "Facebook", icon: "fa-facebook", placeholder: "https://facebook.com/..." },
