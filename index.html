@@ -438,7 +438,7 @@
             btnQR.type = 'button';
             btnQR.className = 'qr-btn-main';
             btnQR.id = 'btn-main-qr';
-            btnQR.textContent = 'Générer mon QR code';
+            btnQR.textContent = 'Télécharger mon QR code';
             qrSection.appendChild(btnQR);
 
             const btnAffiche = document.createElement('button');
@@ -455,15 +455,8 @@
 
             document.getElementById('blocsForm').appendChild(qrSection);
 
-            let qrGenerated = false;
             btnQR.onclick = function() {
-                if (!qrGenerated) {
-                    genererMainQR("https://monlinktree.fr");
-                    btnQR.textContent = "Télécharger mon QR code";
-                    qrGenerated = true;
-                } else {
-                    telechargerMainQR();
-                }
+                genererEtTelechargerQR("https://monlinktree.fr");
             };
 
             btnAffiche.onclick = function() {
@@ -471,7 +464,7 @@
             };
         }
 
-        function genererMainQR(url) {
+        function genererEtTelechargerQR(url) {
             const canvas = document.getElementById('main-qr-canvas');
             canvas.style.display = "block";
             new QRious({
@@ -479,6 +472,11 @@
                 value: url,
                 size: 200
             });
+            
+            // Télécharger immédiatement après génération
+            setTimeout(() => {
+                telechargerMainQR();
+            }, 100);
         }
 
         function telechargerMainQR() {
