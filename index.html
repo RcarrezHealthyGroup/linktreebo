@@ -1,4 +1,88 @@
 <!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Backoffice Linktree - Configuration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
+            font-family: 'Gotham Rounded', Arial, sans-serif;
+            min-height: 100vh;
+            margin: 0;
+            padding: 0;
+            /* Ajout d'une croix pour fermer la page */
+            /* La croix est déjà présente dans le HTML avec la classe .close-btn, on s'assure qu'elle est bien visible */
+            /* Si besoin, vous pouvez personnaliser ici le style de la croix */
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: #cfcfcf; /* Fond grisé */
+            border-radius: 18px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+            padding: 32px 18px 24px 18px;
+        }
+        .close-btn {
+            top: 18px;
+            right: 18px;
+            background: #fff;
+            color: #888888;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            font-size: 1.3rem;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, color 0.2s;
+            z-index: 10;
+        }
+        .close-btn:hover {
+            background: #00a38c;
+            color: #fff;
+        }
+        h1 {
+            text-align: center;
+            color: #00a38c;
+            margin-bottom: 32px;
+            font-weight: 700;
+        }
+        .url-generee-field {
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            color: #666;
+            border-radius: 8px;
+            padding: 10px 16px;
+            font-size: 1.08rem;
+            margin: 18px 0 18px 0;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: center;
+            font-weight: 600;
+            pointer-events: none;
+        }
+    </style>
+</head>
+<body>
+    
+    <script>
+        // Fonctionnalité pour fermer la fenêtre (onglet ou popup)
+        document.getElementById('closeBtn').addEventListener('click', function() {
+            if (window.parent && window.parent !== window) {
+                // Si dans un iframe, essayer de masquer le parent
+                window.parent.postMessage('close-linktreebo', '*');
+            } else {
+                window.close();
+            }
+        });
+    </script>
+</body>
+</html>
 <script>
     // Fonction pour obtenir l'URL en fonction du titre sélectionné
     function getUrlParTitre(titre) {
@@ -65,6 +149,46 @@
             background: #f8f8f8;
             box-shadow: 0 1px 4px rgba(0,163,140,0.05);
             position: relative;
+            cursor: grab;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .bloc-lien:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,163,140,0.1);
+        }
+        .bloc-lien.dragging {
+            cursor: grabbing;
+            opacity: 0.8;
+            transform: rotate(5deg);
+            box-shadow: 0 8px 25px rgba(0,163,140,0.2);
+        }
+        .bloc-lien.drag-over {
+            border: 2px dashed #00a38c;
+            background: #e6f7f4;
+        }
+        .drag-handle {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: #00a38c;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            cursor: grab;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s;
+            z-index: 10;
+        }
+        .drag-handle:hover {
+            background: #008975;
+        }
+        .drag-handle:active {
+            cursor: grabbing;
         }
         .remove-bloc-btn {
             position: absolute;
@@ -87,7 +211,7 @@
         }
         input[type="text"], input[type="url"], select {
             width: 100%;
-            padding: 8px 10px;
+            padding: 8px 1px;
             border-radius: 8px;
             border: 1px solid #cceee7;
             margin-bottom: 14px;
@@ -192,8 +316,32 @@
             margin-top: 20px;
             margin-bottom: 10px;
         }
+        .champ-titre-wrapper {
+            margin-left: 40px;
+            margin-top: 23px;
+            flex: 1;
+            margin-left: 0;
+        }
+        .champ-url-wrapper {
+            flex: 1;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <button class="close-btn" id="closeBtn" title="Fermer">
+            <i class="fa fa-times"></i>
+        </button>
+        <h1>Configuration des liens rapides</h1>
+        <input type="text" class="url-generee-field" value="https://mes-liens-rapides.fr" readonly>
+        <form id="blocsForm">
+            <div id="blocsContainer">
+                <!-- Les blocs seront ajoutés ici dynamiquement -->
+            </div>
+            <!-- Les champs réseaux sociaux et boutons seront ajoutés ici dynamiquement -->
+        </form>
+    </div>
     <script>
         // --- Constantes de configuration ---
         const pictos = [
@@ -216,13 +364,11 @@
             {titre: "Ma carte A+", url: "/carteaplus"},
             {titre: "Personnaliser", url: ""}
         ];
-
         // Fonction pour obtenir l'URL en fonction du titre sélectionné
         function getUrlParTitre(titre) {
             const prop = propositionsLiens.find(p => p.titre === titre);
             return prop ? prop.url : "";
         }
-
         const socialNetworks = [
             { name: "Facebook", icon: "fa-facebook", placeholder: "https://facebook.com/..." },
             { name: "LinkedIn", icon: "fa-linkedin", placeholder: "https://linkedin.com/..." },
@@ -231,6 +377,51 @@
         ];
 
         let blocIndex = 0;
+
+        // --- Fonctions de drag and drop ---
+        function initDragAndDrop() {
+            const blocsContainer = document.getElementById('blocsContainer');
+            
+            blocsContainer.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                const draggingElement = document.querySelector('.dragging');
+                if (draggingElement) {
+                    const afterElement = getDragAfterElement(blocsContainer, e.clientY);
+                    if (afterElement) {
+                        blocsContainer.insertBefore(draggingElement, afterElement);
+                    } else {
+                        blocsContainer.appendChild(draggingElement);
+                    }
+                }
+            });
+
+            blocsContainer.addEventListener('drop', function(e) {
+                e.preventDefault();
+                updateOrderNumbers();
+            });
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.bloc-lien:not(.dragging)')];
+            
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function updateOrderNumbers() {
+            const blocs = document.querySelectorAll('.bloc-lien');
+            blocs.forEach((bloc, index) => {
+                // No longer need to update order numbers since we removed the order field
+            });
+        }
 
         // --- Fonctions utilitaires ---
 
@@ -304,6 +495,15 @@
             const bloc = document.createElement('div');
             bloc.className = 'bloc-lien';
             bloc.setAttribute('data-index', index);
+            bloc.draggable = true;
+
+            // Bouton de drag
+            const dragHandle = document.createElement('button');
+            dragHandle.type = 'button';
+            dragHandle.className = 'drag-handle';
+            dragHandle.innerHTML = '<i class="fa fa-grip-vertical"></i>';
+            dragHandle.title = 'Glisser pour réorganiser';
+            bloc.appendChild(dragHandle);
 
             // Bouton suppression
             const btnSuppr = document.createElement('button');
@@ -313,23 +513,9 @@
             btnSuppr.title = 'Supprimer ce bloc';
             btnSuppr.onclick = function() {
                 bloc.remove();
+                updateOrderNumbers();
             };
             bloc.appendChild(btnSuppr);
-
-            // Champ ordre
-            const labelOrdre = document.createElement('label');
-            labelOrdre.textContent = 'Ordre d\'affichage';
-            labelOrdre.setAttribute('for', `ordre-${index}`);
-            bloc.appendChild(labelOrdre);
-
-            const inputOrdre = document.createElement('input');
-            inputOrdre.type = 'number';
-            inputOrdre.id = `ordre-${index}`;
-            inputOrdre.name = `ordre-${index}`;
-            inputOrdre.placeholder = "1, 2, 3...";
-            inputOrdre.min = "1";
-            inputOrdre.value = (index + 1).toString();
-            bloc.appendChild(inputOrdre);
 
             // Champ titre
             bloc.appendChild(creerChampTitre(index, titre));
@@ -384,6 +570,16 @@
             inputPicto.value = picto;
             bloc.appendChild(inputPicto);
 
+            // Événements de drag and drop
+            bloc.addEventListener('dragstart', function(e) {
+                bloc.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+            });
+
+            bloc.addEventListener('dragend', function(e) {
+                bloc.classList.remove('dragging');
+            });
+
             return bloc;
         }
 
@@ -391,8 +587,7 @@
             const blocsContainer = document.getElementById('blocsContainer');
             const bloc = creerBloc(blocIndex++, titre, url, picto);
             blocsContainer.appendChild(bloc);
-
-            // On ne gère plus ici l'ajout des réseaux sociaux et du QR code
+            updateOrderNumbers();
         }
 
         function ajouterChampsReseauxSociaux() {
@@ -424,7 +619,6 @@
                 socialsContainer.appendChild(row);
             });
 
-            // On n'insère plus ici, mais dans l'initialisation
             return socialsContainer;
         }
 
@@ -499,6 +693,9 @@
         };
 
         document.addEventListener('DOMContentLoaded', function() {
+            // Initialiser le drag and drop
+            initDragAndDrop();
+
             // Création du bouton "Ajouter un bloc"
             const addBlocBtn = document.createElement('button');
             addBlocBtn.type = 'button';
@@ -548,20 +745,18 @@
             document.getElementById('blocsForm').onsubmit = function(e) {
                 e.preventDefault();
                 const blocs = [];
-                document.querySelectorAll('.bloc-lien').forEach(bloc => {
-                    const index = bloc.getAttribute('data-index');
-                    const ordre = bloc.querySelector(`input[name="ordre-${index}"]`).value.trim();
-                    const selectTitre = bloc.querySelector(`select[name="titre-select-${index}"]`);
+                document.querySelectorAll('.bloc-lien').forEach((bloc, index) => {
+                    const selectTitre = bloc.querySelector(`select[name="titre-select-${bloc.getAttribute('data-index')}"]`);
                     let titre = '';
                     if (selectTitre.value === "Personnaliser") {
-                        titre = bloc.querySelector(`input[name="titre-${index}"]`).value.trim();
+                        titre = bloc.querySelector(`input[name="titre-${bloc.getAttribute('data-index')}"]`).value.trim();
                     } else {
                         titre = selectTitre.value;
                     }
-                    const url = bloc.querySelector(`input[name="url-${index}"]`).value.trim();
-                    const picto = bloc.querySelector(`input[name="picto-${index}"]`).value;
-                    if (titre && url && picto && ordre) {
-                        blocs.push({ordre: parseInt(ordre), titre, url, picto});
+                    const url = bloc.querySelector(`input[name="url-${bloc.getAttribute('data-index')}"]`).value.trim();
+                    const picto = bloc.querySelector(`input[name="picto-${bloc.getAttribute('data-index')}"]`).value;
+                    if (titre && url && picto) {
+                        blocs.push({ordre: index + 1, titre, url, picto});
                     }
                 });
 
@@ -577,21 +772,54 @@
                     }
                 });
 
+                // Afficher l'URL générée
+                afficherUrlGeneree();
+
                 // Ici, vous pouvez envoyer les données à votre backend ou les afficher
                 alert('Blocs enregistrés :\n' + JSON.stringify(blocs, null, 2) + '\nRéseaux sociaux :\n' + JSON.stringify(socials, null, 2));
             };
         });
+
+        function afficherUrlGeneree() {
+            // Supprimer l'ancienne URL si elle existe
+            const ancienneUrl = document.getElementById('url-generee');
+            if (ancienneUrl) {
+                ancienneUrl.remove();
+            }
+
+            // Créer et afficher la nouvelle URL
+            const urlDiv = document.createElement('div');
+            urlDiv.id = 'url-generee';
+            urlDiv.style.cssText = `
+                background: #e6f7f4;
+                border: 2px solid #00a38c;
+                border-radius: 8px;
+                padding: 15px;
+                margin: 20px 0;
+                text-align: center;
+                font-weight: 600;
+                color: #00a38c;
+            `;
+            urlDiv.innerHTML = `
+                <i class="fa fa-link" style="margin-right: 8px;"></i>
+                Votre lien : <a href="https://mes-liens-rapides.fr" target="_blank" style="color: #008975; text-decoration: underline;">mes-liens-rapides.fr</a>
+            `;
+
+            // Insérer entre le titre et le premier bloc
+            const titre = document.querySelector('h1');
+            const premierBloc = document.getElementById('blocsContainer');
+            titre.parentNode.insertBefore(urlDiv, premierBloc);
+        }
+
+        // Fonctionnalité pour fermer la fenêtre (onglet ou popup)
+        document.getElementById('closeBtn').addEventListener('click', function() {
+            if (window.parent && window.parent !== window) {
+                // Si dans un iframe, essayer de masquer le parent
+                window.parent.postMessage('close-linktreebo', '*');
+            } else {
+                window.close();
+            }
+        });
     </script>
-</head>
-<body>
-    <div class="container">
-        <h1>Configuration des liens rapides</h1>
-        <form id="blocsForm">
-            <div id="blocsContainer">
-                <!-- Les blocs seront ajoutés ici dynamiquement -->
-            </div>
-            <!-- Les champs réseaux sociaux et boutons seront ajoutés ici dynamiquement -->
-        </form>
-    </div>
 </body>
 </html>
