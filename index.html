@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Backoffice Linktree - Configuration</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body {
             background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
@@ -12,9 +13,6 @@
             min-height: 100vh;
             margin: 0;
             padding: 0;
-            /* Ajout d'une croix pour fermer la page */
-            /* La croix est déjà présente dans le HTML avec la classe .close-btn, on s'assure qu'elle est bien visible */
-            /* Si besoin, vous pouvez personnaliser ici le style de la croix */
         }
         .container {
             max-width: 600px;
@@ -120,6 +118,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Backoffice Linktree - Configuration</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
         body {
             background: linear-gradient(135deg, #ffffff 0%, #ffffff 100%);
@@ -221,6 +220,8 @@
             display: flex;
             gap: 12px;
             margin-bottom: 10px;
+            flex-wrap: wrap;
+            max-width: 100%;
         }
         .picto-item {
             width: 44px;
@@ -345,16 +346,26 @@
     <script>
         // --- Constantes de configuration ---
         const pictos = [
-            {icon: 'fa-link', label: 'Lien'},
-            {icon: 'fa-phone', label: 'Téléphone'},
-            {icon: 'fa-map-marker-alt', label: 'Adresse'},
-            {icon: 'fa-calendar', label: 'Calendrier'},
-            {icon: 'fa-envelope', label: 'Email'},
-            {icon: 'fa-user-md', label: 'Santé'},
-            {icon: 'fa-shopping-bag', label: 'Shopping'},
-            {icon: 'fa-info-circle', label: 'Info'},
-            {icon: 'fa-heart', label: 'Cœur'},
-            {icon: 'fa-star', label: 'Étoile'}
+            {icon: 'bi-link-45deg', label: 'Lien'},
+            {icon: 'bi-telephone', label: 'Téléphone'},
+            {icon: 'bi-geo-alt', label: 'Adresse'},
+            {icon: 'bi-calendar', label: 'Calendrier'},
+            {icon: 'bi-envelope', label: 'Email'},
+            {icon: 'bi-heart-pulse', label: 'Santé'},
+            {icon: 'bi-bag', label: 'Shopping'},
+            {icon: 'bi-info-circle', label: 'Info'},
+            {icon: 'bi-heart', label: 'Cœur'},
+            {icon: 'bi-star', label: 'Étoile'},
+            {icon: 'bi-house', label: 'Maison'},
+            {icon: 'bi-person', label: 'Personne'},
+            {icon: 'bi-cart', label: 'Panier'},
+            {icon: 'bi-phone', label: 'Mobile'},
+            {icon: 'bi-chat', label: 'Chat'},
+            {icon: 'bi-camera', label: 'Caméra'},
+            {icon: 'bi-music-note', label: 'Musique'},
+            {icon: 'bi-bookmark', label: 'Favoris'},
+            {icon: 'bi-share', label: 'Partager'},
+            {icon: 'bi-download', label: 'Télécharger'}
         ];
 
         const propositionsLiens = [
@@ -545,30 +556,115 @@
             labelPicto.setAttribute('for', `picto-${index}`);
             bloc.appendChild(labelPicto);
 
-            const pictoList = document.createElement('div');
-            pictoList.className = 'picto-list';
+            // Création d'un bouton qui ouvre une "liste déroulante" personnalisée sous forme de tableau de pictos
+            const pictoDropdownWrapper = document.createElement('div');
+            pictoDropdownWrapper.style.position = "relative";
+            pictoDropdownWrapper.style.display = "inline-block";
 
-            pictos.forEach(p => {
-                const item = document.createElement('div');
-                item.className = 'picto-item' + (p.icon === picto ? ' selected' : '');
-                item.title = p.label;
-                item.innerHTML = `<i class="fa ${p.icon}"></i>`;
-                item.onclick = function() {
-                    pictoList.querySelectorAll('.picto-item').forEach(i => i.classList.remove('selected'));
-                    item.classList.add('selected');
-                    inputPicto.value = p.icon;
-                };
-                pictoList.appendChild(item);
-            });
+            // Bouton affichant le picto sélectionné
+            const pictoDropdownBtn = document.createElement('button');
+            pictoDropdownBtn.type = "button";
+            pictoDropdownBtn.className = "picto-dropdown-btn";
+            pictoDropdownBtn.style.display = "flex";
+            pictoDropdownBtn.style.alignItems = "center";
+            pictoDropdownBtn.style.gap = "8px";
+            pictoDropdownBtn.style.background = "#e6f7f4";
+            pictoDropdownBtn.style.border = "1px solid #cceee7";
+            pictoDropdownBtn.style.borderRadius = "8px";
+            pictoDropdownBtn.style.padding = "8px 14px";
+            pictoDropdownBtn.style.cursor = "pointer";
+            pictoDropdownBtn.style.fontSize = "1.1rem";
+            pictoDropdownBtn.innerHTML = `<i class="fa ${picto}"></i> <span style="font-size:1rem;">${(pictos.find(p=>p.icon===picto)?.label)||'Picto'}</span> <i class="fa fa-caret-down" style="margin-left:8px;"></i>`;
 
-            bloc.appendChild(pictoList);
-
-            // Champ caché picto
+            // Champ caché pour stocker la valeur du picto sélectionné
             const inputPicto = document.createElement('input');
             inputPicto.type = 'hidden';
             inputPicto.name = `picto-${index}`;
             inputPicto.value = picto;
-            bloc.appendChild(inputPicto);
+
+            // La "liste déroulante" personnalisée
+            const pictoGrid = document.createElement('div');
+            pictoGrid.className = "picto-dropdown-grid";
+            pictoGrid.style.position = "absolute";
+            pictoGrid.style.top = "110%";
+            pictoGrid.style.left = "0";
+            pictoGrid.style.background = "#fff";
+            pictoGrid.style.border = "1px solid #cceee7";
+            pictoGrid.style.borderRadius = "10px";
+            pictoGrid.style.boxShadow = "0 2px 8px rgba(0,0,0,0.08)";
+            pictoGrid.style.padding = "12px";
+            pictoGrid.style.display = "none";
+            pictoGrid.style.zIndex = "100";
+            pictoGrid.style.minWidth = "520px"; // Agrandir la largeur
+            pictoGrid.style.maxWidth = "700px";
+            pictoGrid.style.maxHeight = "none"; // Pas de scroll vertical
+            pictoGrid.style.overflowY = "visible";
+            pictoGrid.style.boxSizing = "border-box";
+
+            // Remplir la grille de pictos
+            const grid = document.createElement('div');
+            grid.style.display = "grid";
+            grid.style.gridTemplateColumns = "repeat(10, 1fr)"; // Plus de colonnes pour éviter le scroll
+            grid.style.gap = "12px";
+
+            pictos.forEach(p => {
+                const item = document.createElement('button');
+                item.type = "button";
+                item.className = "picto-item" + (p.icon === picto ? " selected" : "");
+                item.title = p.label;
+                item.style.display = "flex";
+                item.style.flexDirection = "column";
+                item.style.alignItems = "center";
+                item.style.justifyContent = "center";
+                item.style.background = p.icon === picto ? "#d0f5ee" : "#e6f7f4";
+                item.style.border = p.icon === picto ? "2px solid #00a38c" : "2px solid transparent";
+                item.style.borderRadius = "50%";
+                item.style.width = "48px";
+                item.style.height = "48px";
+                item.style.cursor = "pointer";
+                item.style.fontSize = "1.5rem";
+                item.style.transition = "border 0.2s, background 0.2s";
+                item.innerHTML = `<i class="fa ${p.icon}"></i><span style="font-size:0.8rem;margin-top:2px;">${p.label}</span>`;
+                item.onclick = function(e) {
+                    e.stopPropagation();
+                    // Mettre à jour le bouton principal
+                    pictoDropdownBtn.innerHTML = `<i class="fa ${p.icon}"></i> <span style="font-size:1rem;">${p.label}</span> <i class="fa fa-caret-down" style="margin-left:8px;"></i>`;
+                    // Mettre à jour la valeur cachée
+                    inputPicto.value = p.icon;
+                    // Mettre à jour la sélection visuelle
+                    grid.querySelectorAll('.picto-item').forEach(i => {
+                        i.style.border = "2px solid transparent";
+                        i.style.background = "#e6f7f4";
+                    });
+                    item.style.border = "2px solid #00a38c";
+                    item.style.background = "#d0f5ee";
+                    // Fermer la grille
+                    pictoGrid.style.display = "none";
+                };
+                grid.appendChild(item);
+            });
+
+            pictoGrid.appendChild(grid);
+
+            // Afficher/masquer la grille au clic sur le bouton
+            pictoDropdownBtn.onclick = function(e) {
+                e.stopPropagation();
+                pictoGrid.style.display = (pictoGrid.style.display === "none" || !pictoGrid.style.display) ? "block" : "none";
+            };
+
+            // Fermer la grille si on clique ailleurs
+            document.addEventListener('click', function(e) {
+                if (!pictoDropdownWrapper.contains(e.target)) {
+                    pictoGrid.style.display = "none";
+                }
+            });
+
+            pictoDropdownWrapper.appendChild(pictoDropdownBtn);
+            pictoDropdownWrapper.appendChild(pictoGrid);
+            pictoDropdownWrapper.appendChild(inputPicto);
+
+            bloc.appendChild(pictoDropdownWrapper);
+
 
             // Événements de drag and drop
             bloc.addEventListener('dragstart', function(e) {
